@@ -4,18 +4,21 @@ interface IValidateData {
 
 export const validateData = (
   reqData: IValidateData,
-  data: IValidateData,
+  keys: string[],
 ): boolean => {
-  let isValidate: boolean = false;
-  const dataKeys: string[] = Object.keys(data);
-
-  for (const key of dataKeys) {
-    isValidate = Object.hasOwn(reqData, key);
-
-    if (!isValidate) {
-      return isValidate;
-    }
+  if (typeof reqData !== 'object' || reqData === null) {
+    return false;
   }
 
-  return isValidate;
+  for (const key of keys) {
+    if (!Object.hasOwn(reqData, key)) {
+      return false;
+    }
+
+    const value: string = reqData[key];
+    if (typeof value !== 'string' || value.trim().length === 0) {
+      return false;
+    }
+  }
+  return true;
 };
