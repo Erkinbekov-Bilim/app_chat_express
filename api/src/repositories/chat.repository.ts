@@ -20,9 +20,33 @@ const chatRepository = {
     return data;
   },
 
+  getLastMessages(limit: number) {
+    const messages: IMessage[] = data.slice(-limit);
+    const sortedMessages: IMessage[] = [...messages]
+      .sort(
+        (a, b) =>
+          new Date(a.datetime).getTime() - new Date(b.datetime).getTime(),
+      )
+      .slice(0, limit);
+
+    return sortedMessages;
+  },
+
+  getMessagesFromDate(datetime: string) {
+    const dateMessageIndex: number = data.findIndex(
+      (message) => message.datetime === datetime,
+    );
+
+    const messagesAfterDate: IMessage[] = data.slice(
+      dateMessageIndex + 1,
+      data.length + 1,
+    );
+    return messagesAfterDate;
+  },
+
   async addMessage(messageData: IMessageMutation) {
     const date: Date = new Date();
-    const id = crypto.randomUUID();
+    const id: string = crypto.randomUUID();
     const newMessageData: IMessage = {
       ...messageData,
       datetime: date.toISOString(),
