@@ -23,7 +23,7 @@ chatRouter.get('/', async (req: Request, res: Response) => {
     });
   }
 
-  const messages: IMessage[] = chatRepository.getLastMessages(5);
+  const messages: IMessage[] = chatRepository.getLastMessages(30);
   return res.json(messages);
 });
 
