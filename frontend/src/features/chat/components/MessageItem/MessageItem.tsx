@@ -1,18 +1,17 @@
 import { type FC } from 'react';
 import type { IMessage } from '../../../../types/chat/message.type';
-import dayjs from 'dayjs';
+
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { indigo } from '@mui/material/colors';
+import { formatDateTime } from './formaDate';
 
 interface IMessageItemProps {
   message: IMessage;
 }
 
 const MessageItem: FC<IMessageItemProps> = ({ message }) => {
-  const formateDateTime: string = dayjs(message.datetime).format(
-    'DD.MM.YYYY HH:mm',
-  );
+  const formateDateTime: string = formatDateTime(message.datetime);
   return (
     <Box
       sx={{
