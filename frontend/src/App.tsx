@@ -1,10 +1,10 @@
-import React from 'react';
+import ChatHome from './features/chat/ChatHome/ChatHome';
 
 const App = () => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <ChatHome />
+    </>
   );
 };
 
