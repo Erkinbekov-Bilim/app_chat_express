@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import type { IMessage } from '../../types/chat/message.type';
-import { getMessages, postNewMessage } from './chat.api';
+import { getMessages, getNewMessages, postNewMessage } from './chat.api';
 
 export interface IChatState {
   messages: IMessage[];
@@ -48,6 +48,23 @@ export const chatSlice = createSlice({
       state.messages = messages;
     });
     builder.addCase(getMessages.rejected, (state) => {
+      state.loading.fetchLoading = false;
+      state.isError = true;
+    });
+
+    builder.addCase(getNewMessages.pending, (state) => {
+      state.loading.fetchLoading = true;
+      state.isError = false;
+    });
+    builder.addCase(
+      getNewMessages.fulfilled,
+      (state, { payload: newMessages }) => {
+        state.loading.fetchLoading = false;
+        state.isError = false;
+        state.messages = [...state.messages, ...newMessages];
+      },
+    );
+    builder.addCase(getNewMessages.rejected, (state) => {
       state.loading.fetchLoading = false;
       state.isError = true;
     });
