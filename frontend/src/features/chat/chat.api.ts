@@ -17,3 +17,13 @@ export const getMessages = createAsyncThunk<IMessage[], void>(
     return data;
   },
 );
+
+export const getNewMessages = createAsyncThunk<
+  IMessage[],
+  { datetime: string }
+>('chat/getNewMessages', async (params) => {
+  const { data } = await axiosApi.get<IMessage[]>(
+    `messages?datetime=${params.datetime}`,
+  );
+  return data;
+});
