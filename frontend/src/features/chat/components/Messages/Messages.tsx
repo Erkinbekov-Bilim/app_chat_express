@@ -1,16 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   useAppDispatch,
   useAppSelector,
 } from '../../../../app/hooks/reduxHooks';
-import { getMessages } from '../../chat.api';
+import { getMessages, getNewMessages } from '../../chat.api';
 import {
   selectIsError,
   selectLoading,
   selectMessages,
 } from '../../chat.selectors';
 import MessageItem from '../MessageItem/MessageItem';
-import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import type { CSSProperties } from '@mui/material/styles';
@@ -34,6 +33,7 @@ const customScrollBarStyle: CSSProperties = {
 };
 
 const Messages = () => {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const dispatch = useAppDispatch();
   const { fetchLoading } = useAppSelector(selectLoading);
   const isError = useAppSelector(selectIsError);
@@ -43,11 +43,31 @@ const Messages = () => {
     dispatch(getMessages());
   }, [dispatch]);
 
-  const renderContent = () => {
-    if (fetchLoading) {
-      return <CircularProgress />;
+  useEffect(() => {
+    const element = containerRef.current;
+    if (element) {
+      element.scrollTo({
+        top: element.scrollHeight,
+        behavior: 'smooth',
+      })
     }
+  }, [messages]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (messages.length > 0) {
+        dispatch(
+          getNewMessages({
+            datetime: messages[messages.length - 1].datetime,
+          }),
+        );
+      }
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [dispatch, messages]);
+
+  const renderContent = () => {
     if (!fetchLoading && messages.length === 0) {
       return (
         <Typography variant="h5" component={'p'}>
@@ -88,6 +108,7 @@ const Messages = () => {
         flexDirection: 'column',
         ...customScrollBarStyle,
       }}
+      ref={containerRef}
     >
       {renderContent()}
     </Box>
